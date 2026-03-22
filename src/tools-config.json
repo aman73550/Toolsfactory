@@ -1,0 +1,274 @@
+{
+  "tools": [
+    {
+      "slug": "json-formatter",
+      "name": "JSON Formatter",
+      "description": "Format and validate your JSON data instantly.",
+      "category": "Text"
+    },
+    {
+      "slug": "image-compressor",
+      "name": "Image Compressor",
+      "description": "Compress JPG, PNG, and WebP images without losing quality. Features a live before/after comparison.",
+      "category": "Image"
+    },
+    {
+      "slug": "word-counter",
+      "name": "Word & Character Counter",
+      "description": "Real-time word count, character count, and reading time estimator for your text.",
+      "category": "Text"
+    },
+    {
+      "slug": "password-generator",
+      "name": "Secure Password Generator",
+      "description": "Generate strong, secure, and random passwords locally in your browser.",
+      "category": "Developer"
+    },
+    {
+      "slug": "qr-code-generator",
+      "name": "QR Code Generator",
+      "description": "Create custom QR codes for URLs, text, and contact info instantly.",
+      "category": "Image"
+    },
+    {
+      "slug": "color-picker",
+      "name": "Color Picker from Image",
+      "description": "Extract exact HEX and RGB color codes from any image instantly.",
+      "category": "Image"
+    },
+    {
+      "slug": "case-converter",
+      "name": "Case Converter",
+      "description": "Easily convert text between upper case, lower case, title case, and more.",
+      "category": "Text"
+    },
+    {
+      "slug": "bmi-calculator",
+      "name": "BMI Calculator",
+      "description": "Calculate your Body Mass Index (BMI) to understand your weight category.",
+      "category": "Utility"
+    },
+    {
+      "slug": "base64-converter",
+      "name": "Base64 Encode/Decode",
+      "description": "Convert text to Base64 format or decode Base64 back to normal text instantly.",
+      "category": "Developer"
+    },
+    {
+      "slug": "merge-pdf",
+      "name": "Merge PDF",
+      "description": "Combine multiple PDF files into a single document instantly.",
+      "category": "PDF"
+    },
+    {
+      "slug": "split-pdf",
+      "name": "Split PDF",
+      "description": "Extract specific pages from your PDF file instantly.",
+      "category": "PDF"
+    },
+    {
+      "slug": "image-to-pdf",
+      "name": "Image to PDF",
+      "description": "Convert JPG and PNG images into a single PDF document.",
+      "category": "PDF"
+    },
+    {
+      "slug": "rotate-pdf",
+      "name": "Rotate PDF",
+      "description": "Rotate specific pages or all pages in your PDF document.",
+      "category": "PDF"
+    },
+    {
+      "slug": "remove-pdf-pages",
+      "name": "Remove PDF Pages",
+      "description": "Delete unwanted pages from your PDF document easily.",
+      "category": "PDF"
+    },
+    {
+      "slug": "watermark-pdf",
+      "name": "Add Watermark to PDF",
+      "description": "Stamp your PDF documents with a custom text watermark.",
+      "category": "PDF"
+    },
+    {
+      "slug": "pdf-to-jpg",
+      "name": "PDF to JPG",
+      "description": "Convert every page of your PDF into high-quality JPG images instantly.",
+      "category": "PDF"
+    },
+    {
+      "slug": "pdf-to-text",
+      "name": "PDF to Text",
+      "description": "Extract all readable text from your PDF document instantly.",
+      "category": "PDF"
+    },
+    {
+      "slug": "edit-pdf-metadata",
+      "name": "Edit PDF Metadata",
+      "description": "View and modify the hidden properties (Title, Author, Subject) of your PDF.",
+      "category": "PDF"
+    },
+    {
+      "slug": "reorder-pdf",
+      "name": "Reorder PDF Pages",
+      "description": "Drag and drop page thumbnails to reorder or delete pages visually.",
+      "category": "PDF"
+    },
+    {
+      "slug": "days-between-dates",
+      "name": "Days Between Dates",
+      "description": "Calculate the exact number of days, weeks, months, and years between two dates.",
+      "category": "Utility"
+    },
+    {
+      "slug": "sales-tax-calculator",
+      "name": "Sales Tax Calculator",
+      "description": "Easily add or extract sales tax from any amount.",
+      "category": "Utility"
+    },
+    {
+      "slug": "emi-calculator",
+      "name": "Loan / EMI Calculator",
+      "description": "Calculate your Equated Monthly Installment (EMI) with a visual breakdown of principal and interest.",
+      "category": "Utility"
+    },
+    {
+      "slug": "compound-interest-calculator",
+      "name": "Compound Interest Calculator",
+      "description": "Visualize how your money grows over time with the power of compound interest.",
+      "category": "Utility"
+    },
+    {
+      "slug": "binary-hex-converter",
+      "name": "Binary & Hex Converter",
+      "description": "Convert seamlessly between Text, Binary, Hexadecimal, and Decimal formats.",
+      "category": "Developer"
+    },
+    {
+      "slug": "roman-numeral-converter",
+      "name": "Roman Numeral Converter",
+      "description": "Convert numbers to Roman Numerals and vice versa instantly.",
+      "category": "Utility"
+    },
+    {
+      "slug": "speed-test",
+      "name": "Internet Speed Test",
+      "description": "Check your download, upload, and ping speeds instantly using our embedded speed test.",
+      "category": "Utility"
+    },
+    {
+      "slug": "youtube-thumbnail-downloader",
+      "name": "YouTube Thumbnail Downloader",
+      "description": "Extract and download high-quality thumbnails from any YouTube video instantly.",
+      "category": "Utility"
+    },
+    {
+      "slug": "youtube-downloader",
+      "name": "YouTube Video Downloader",
+      "description": "Download YouTube videos and Shorts in MP4 or MP3 formats instantly.",
+      "category": "Utility"
+    },
+    {
+      "slug": "instagram-downloader",
+      "name": "Instagram Downloader",
+      "description": "Download Instagram Reels, Photos, Stories, and IGTV videos in high quality.",
+      "category": "Utility"
+    },
+    {
+      "slug": "social-to-mp3",
+      "name": "Social Video to MP3",
+      "description": "Extract high-quality audio from YouTube, Instagram, TikTok, X, and Facebook videos.",
+      "category": "Utility"
+    },
+    {
+      "slug": "world-clock",
+      "name": "World Clock",
+      "description": "Keep track of the exact time across major cities worldwide.",
+      "category": "Utility"
+    },
+    {
+      "slug": "image-resizer",
+      "name": "Image Resizer",
+      "description": "Resize your images instantly with live dimension previews.",
+      "category": "Image"
+    },
+    {
+      "slug": "photo-filters",
+      "name": "Photo Filters",
+      "description": "Apply beautiful filters and adjustments to your photos in real-time.",
+      "category": "Image"
+    },
+    {
+      "slug": "flip-mirror-image",
+      "name": "Flip & Mirror Image",
+      "description": "Instantly flip your images horizontally or vertically with live preview.",
+      "category": "Image"
+    },
+    {
+      "slug": "round-corners",
+      "name": "Round Image Corners",
+      "description": "Add smooth rounded corners or make your image a perfect circle instantly.",
+      "category": "Image"
+    },
+    {
+      "slug": "base64-to-image",
+      "name": "Base64 to Image",
+      "description": "Paste your Base64 string to instantly preview and download the image.",
+      "category": "Developer"
+    },
+    {
+      "slug": "image-converter",
+      "name": "Image Format Converter",
+      "description": "Convert images between JPG, PNG, and WebP formats locally in your browser.",
+      "category": "Image"
+    },
+    {
+      "slug": "background-remover",
+      "name": "Background Remover",
+      "description": "Remove the background from your images instantly.",
+      "category": "Image"
+    },
+    {
+      "slug": "crop-image",
+      "name": "Crop Image",
+      "description": "Crop your images to specific aspect ratios or custom sizes.",
+      "category": "Image"
+    },
+    {
+      "slug": "image-upscaler",
+      "name": "Image Upscaler",
+      "description": "Upscale and enhance your low-resolution images.",
+      "category": "Image"
+    },
+    {
+      "slug": "image-to-text",
+      "name": "Image to Text (OCR)",
+      "description": "Extract text from images using Optical Character Recognition.",
+      "category": "Image"
+    },
+    {
+      "slug": "add-text-to-image",
+      "name": "Add Text to Image",
+      "description": "Add custom text, watermarks, and typography to your images.",
+      "category": "Image"
+    },
+    {
+      "slug": "svg-to-png",
+      "name": "SVG to PNG Converter",
+      "description": "Convert scalable vector graphics (SVG) into high-quality PNG images.",
+      "category": "Image"
+    },
+    {
+      "slug": "favicon-generator",
+      "name": "Favicon Generator",
+      "description": "Generate favicon.ico and app icons from your images.",
+      "category": "Image"
+    },
+    {
+      "slug": "barcode-generator",
+      "name": "Barcode Generator",
+      "description": "Create standard barcodes (Code 128, EAN, UPC) instantly.",
+      "category": "Image"
+    }
+  ]
+}
