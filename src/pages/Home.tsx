@@ -14,6 +14,8 @@ export default function Home() {
   const [tools, setTools] = useState<Tool[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [activeCategory, setActiveCategory] = useState('');
+  const [selectedTool, setSelectedTool] = useState<Tool | null>(null);
   const navigate = useNavigate();
   const searchRef = useRef<HTMLDivElement>(null);
 
@@ -41,6 +43,17 @@ export default function Home() {
   const popularTools = tools.filter(t => popularSlugs.includes(t.slug));
   // Fallback if specific slugs aren't found
   const displayPopular = popularTools.length > 0 ? popularTools : tools.slice(0, 4);
+  const categories = Array.from(new Set(tools.map(tool => tool.category))).sort((a, b) => a.localeCompare(b));
+
+  useEffect(() => {
+    if (!activeCategory && categories.length > 0) {
+      setActiveCategory(categories[0]);
+    }
+  }, [activeCategory, categories]);
+
+  const toolsInActiveCategory = tools
+    .filter(tool => tool.category === activeCategory)
+    .sort((a, b) => a.name.localeCompare(b.name));
 
   return (
     <div className="min-h-[80vh] flex flex-col">
@@ -119,6 +132,75 @@ export default function Home() {
       {/* Below the Fold: Most Popular & Why Choose Us */}
       <section className="bg-slate-50 border-t border-slate-200 py-16 px-4">
         <div className="max-w-6xl mx-auto space-y-16">
+
+          {/* Browse Tools By Category */}
+          {categories.length > 0 && (
+            <div className="space-y-6">
+              <div className="text-center space-y-2">
+                <h3 className="text-sm font-bold tracking-widest text-slate-400 uppercase">Browse By Category</h3>
+                <p className="text-slate-600 text-sm">Select a category, choose a tool, then open it manually.</p>
+              </div>
+
+              <div className="flex flex-wrap justify-center gap-2">
+                {categories.map(category => (
+                  <button
+                    key={category}
+                    onClick={() => {
+                      setActiveCategory(category);
+                      setSelectedTool(null);
+                    }}
+                    className={cn(
+                      'px-4 py-2 rounded-full border text-sm font-medium transition-colors',
+                      activeCategory === category
+                        ? 'bg-slate-900 text-white border-slate-900'
+                        : 'bg-white text-slate-700 border-slate-300 hover:border-slate-400'
+                    )}
+                  >
+                    {category}
+                  </button>
+                ))}
+              </div>
+
+              <div className="bg-white border border-slate-200 rounded-2xl p-5 space-y-5">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                  <h4 className="font-semibold text-slate-900">
+                    {activeCategory} Tools ({toolsInActiveCategory.length})
+                  </h4>
+                  <button
+                    onClick={() => selectedTool && navigate(`/tools/${selectedTool.slug}`)}
+                    disabled={!selectedTool}
+                    className={cn(
+                      'inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-colors',
+                      selectedTool
+                        ? 'bg-indigo-600 text-white hover:bg-indigo-700'
+                        : 'bg-slate-200 text-slate-500 cursor-not-allowed'
+                    )}
+                  >
+                    Open Selected Tool <ArrowRight className="w-4 h-4" />
+                  </button>
+                </div>
+
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {toolsInActiveCategory.map(tool => (
+                    <button
+                      key={tool.slug}
+                      type="button"
+                      onClick={() => setSelectedTool(tool)}
+                      className={cn(
+                        'text-left border rounded-xl p-4 transition-colors',
+                        selectedTool?.slug === tool.slug
+                          ? 'border-indigo-500 bg-indigo-50/70'
+                          : 'border-slate-200 bg-white hover:border-slate-300'
+                      )}
+                    >
+                      <p className="font-semibold text-slate-900 text-sm mb-1">{tool.name}</p>
+                      <p className="text-xs text-slate-600 line-clamp-2">{tool.description}</p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
           
           {/* Most Popular Tools */}
           {displayPopular.length > 0 && (
@@ -126,16 +208,21 @@ export default function Home() {
               <h3 className="text-sm font-bold tracking-widest text-slate-400 uppercase mb-6 text-center">Most Popular Tools</h3>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {displayPopular.map(tool => (
-                  <Link 
-                    key={tool.slug} 
-                    to={`/tools/${tool.slug}`}
-                    className="flex flex-col items-center p-6 bg-white rounded-2xl border border-slate-200 hover:border-indigo-300 hover:shadow-md transition-all text-center group"
+                  <div 
+                    key={tool.slug}
+                    className="flex flex-col items-center p-6 bg-white rounded-2xl border border-slate-200 text-center"
                   >
-                    <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center mb-4 transition-transform">
                       <Settings className="w-6 h-6" />
                     </div>
-                    <h4 className="font-semibold text-slate-800 text-sm">{tool.name}</h4>
-                  </Link>
+                    <h4 className="font-semibold text-slate-800 text-sm mb-3">{tool.name}</h4>
+                    <button
+                      onClick={() => navigate(`/tools/${tool.slug}`)}
+                      className="inline-flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg bg-slate-900 text-white hover:bg-slate-800"
+                    >
+                      Open <ArrowRight className="w-3 h-3" />
+                    </button>
+                  </div>
                 ))}
               </div>
             </div>
