@@ -17,13 +17,21 @@ export default function Home() {
   const [tools, setTools] = useState<Tool[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [activeCategory, setActiveCategory] = useState<string>('');
   const navigate = useNavigate();
   const searchRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetch('/api/tools')
       .then(res => res.json())
-      .then(data => setTools(data))
+      .then(data => {
+        setTools(data);
+        // Set first category as active
+        const cats = Array.from(new Set(data.map((t: Tool) => t.category))).sort();
+        if (cats.length > 0) {
+          setActiveCategory(cats[0] as string);
+        }
+      })
       .catch(err => console.error('Failed to load tools:', err));
 
     const handleClickOutside = (event: MouseEvent) => {
@@ -39,6 +47,15 @@ export default function Home() {
     tool.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     tool.description.toLowerCase().includes(searchQuery.toLowerCase())
   ).slice(0, 6);
+
+  // Get all unique categories sorted alphabetically
+  const categories = Array.from(new Set(tools.map(tool => tool.category)))
+    .sort((a, b) => a.localeCompare(b)) as string[];
+
+  // Get tools in active category
+  const toolsInCategory = tools
+    .filter(tool => tool.category === activeCategory)
+    .sort((a, b) => a.name.localeCompare(b.name));
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
@@ -188,6 +205,65 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Category Browser */}
+      {categories.length > 0 && (
+        <section className="border-t border-slate-200 py-16 md:py-24 px-4 bg-white">
+          <div className="max-w-6xl mx-auto">
+            <div className="mb-8">
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
+                Browse by Category
+              </h2>
+              <p className="text-slate-600 text-lg">
+                Explore tools organized by type
+              </p>
+            </div>
+
+            {/* Category Tabs */}
+            <div className="flex flex-wrap gap-2 md:gap-3 mb-12 pb-6 border-b border-slate-200 overflow-x-auto">
+              {categories.map(cat => (
+                <button
+                  key={cat}
+                  onClick={() => setActiveCategory(cat)}
+                  className={cn(
+                    "px-4 md:px-6 py-2 md:py-3 rounded-lg font-medium text-sm md:text-base transition-all whitespace-nowrap",
+                    activeCategory === cat
+                      ? "bg-indigo-600 text-white shadow-md"
+                      : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                  )}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+
+            {/* Tools Grid for Active Category */}
+            {toolsInCategory.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {toolsInCategory.map((tool, idx) => (
+                  <button
+                    key={tool.slug}
+                    onClick={() => navigate(`/tools/${tool.slug}`)}
+                    className="group text-left p-6 rounded-lg border border-slate-200 bg-white hover:border-indigo-300 hover:shadow-md transition-all fade-in-up"
+                    style={{ animationDelay: `${(idx % 6) * 0.05}s` }}
+                  >
+                    <div className="flex items-start justify-between mb-4">
+                      <ToolCardIcon category={(tool.category as any) || 'code'} size="md" showBackground={true} />
+                      <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-indigo-600 transition-colors" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-slate-900 mb-2">{tool.name}</h3>
+                    <p className="text-sm text-slate-600 line-clamp-2">{tool.description}</p>
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <p className="text-slate-600">No tools found in this category</p>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
 
       {/* Popular Tools Preview */}
       <section className="py-16 md:py-24 px-4 bg-white">
