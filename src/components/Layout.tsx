@@ -1,13 +1,49 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { Settings2, Wrench, Search, Github, Twitter, Linkedin } from 'lucide-react';
+import { Settings2, Wrench, Search, Github, Twitter, Linkedin, Clock3, X } from 'lucide-react';
+
+type LimitState = {
+  open: boolean;
+  retryAfterSec: number;
+};
 
 export default function Layout() {
   const location = useLocation();
+  const [limitState, setLimitState] = useState<LimitState>({ open: false, retryAfterSec: 0 });
+
+  useEffect(() => {
+    const handleRateLimited = (event: Event) => {
+      const detail = (event as CustomEvent<{ retryAfterMs?: number }>).detail;
+      const retryAfterSec = Math.ceil((detail?.retryAfterMs || 60_000) / 1000);
+      setLimitState({ open: true, retryAfterSec });
+    };
+
+    const originalFetch = window.fetch.bind(window);
+    window.fetch = async (...args) => {
+      const response = await originalFetch(...args);
+      if (response.status === 429) {
+        try {
+          const payload = await response.clone().json();
+          if (payload?.code === 'RATE_LIMITED') {
+            window.dispatchEvent(new CustomEvent('app:rate-limited', { detail: payload }));
+          }
+        } catch {
+          window.dispatchEvent(new CustomEvent('app:rate-limited', { detail: {} }));
+        }
+      }
+      return response;
+    };
+
+    window.addEventListener('app:rate-limited', handleRateLimited as EventListener);
+    return () => {
+      window.fetch = originalFetch;
+      window.removeEventListener('app:rate-limited', handleRateLimited as EventListener);
+    };
+  }, []);
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] font-sans text-slate-900 flex flex-col">
-      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200/60">
+    <div className="surface-blob min-h-screen bg-white font-sans text-slate-900 flex flex-col">
+      <header className="glass-header sticky top-0 z-50 bg-white/80 border-b border-slate-200/70">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <Link to="/" className="flex items-center gap-2 group">
@@ -119,6 +155,43 @@ export default function Layout() {
           </div>
         </div>
       </footer>
+
+      {limitState.open && (
+        <div className="fixed inset-0 z-[60] grid place-items-center p-4 glass-scrim">
+          <div className="premium-card w-full max-w-md rounded-3xl p-8">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h3 className="text-2xl font-semibold text-slate-900">Take a Break</h3>
+                <p className="mt-2 text-sm text-slate-600 leading-relaxed">
+                  You have reached the request limit for this minute. Pause for a moment and try again.
+                </p>
+              </div>
+              <button
+                onClick={() => setLimitState({ open: false, retryAfterSec: 0 })}
+                className="h-8 w-8 rounded-lg border border-slate-200 text-slate-600 grid place-items-center hover:border-slate-300 transition-colors"
+                aria-label="Close rate limit notice"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 flex items-center justify-between">
+              <div className="flex items-center gap-2 text-slate-700 text-sm font-medium">
+                <Clock3 className="h-4 w-4 text-indigo-600" />
+                Suggested wait time
+              </div>
+              <div className="text-lg font-semibold text-slate-900">{Math.max(1, limitState.retryAfterSec)}s</div>
+            </div>
+
+            <button
+              onClick={() => setLimitState({ open: false, retryAfterSec: 0 })}
+              className="primary-action mt-6 w-full rounded-xl px-4 py-3 font-medium"
+            >
+              I understand
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

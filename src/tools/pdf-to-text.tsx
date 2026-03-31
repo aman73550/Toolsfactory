@@ -1,9 +1,9 @@
 import React, { useState, useRef } from 'react';
 import { FileUp, FileText, Copy, Download, Shield, Check, Loader2 } from 'lucide-react';
 import * as pdfjsLib from 'pdfjs-dist';
+import { configurePdfWorker } from '../lib/pdf-worker';
 
-// Configure PDF.js worker
-pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
+configurePdfWorker();
 
 export default function PdfToText() {
   const [file, setFile] = useState<File | null>(null);

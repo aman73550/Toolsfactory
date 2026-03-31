@@ -2,9 +2,9 @@ import React, { useState, useRef, useEffect } from 'react';
 import { FileUp, Download, Shield, GripVertical, Trash2, Loader2, FileText } from 'lucide-react';
 import * as pdfjsLib from 'pdfjs-dist';
 import { PDFDocument } from 'pdf-lib';
+import { configurePdfWorker } from '../lib/pdf-worker';
 
-// Configure PDF.js worker
-pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
+configurePdfWorker();
 
 interface PageThumbnail {
   id: string;
@@ -67,7 +67,7 @@ export default function ReorderPdfPages() {
         context.fillStyle = '#ffffff';
         context.fillRect(0, 0, canvas.width, canvas.height);
         
-        await page.render({ canvasContext: context, viewport }).promise;
+        await page.render({ canvas, canvasContext: context, viewport }).promise;
         
         newPages.push({
           id: `page-${i}-${Date.now()}`,

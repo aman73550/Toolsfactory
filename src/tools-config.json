@@ -19,6 +19,54 @@
       "category": "Text"
     },
     {
+      "slug": "typing-speed-test-wpm",
+      "name": "Typing Speed Test (WPM)",
+      "description": "Measure WPM, accuracy, and errors in real time with a live speed graph.",
+      "category": "Typing"
+    },
+    {
+      "slug": "coding-typing-test",
+      "name": "Coding Typing Test",
+      "description": "Practice typing JavaScript, Python, and Java style snippets with live feedback.",
+      "category": "Typing"
+    },
+    {
+      "slug": "numpad-typing-test",
+      "name": "Numpad Typing Test",
+      "description": "Dedicated numeric typing practice for data entry and finance professionals.",
+      "category": "Typing"
+    },
+    {
+      "slug": "blind-typing-tutor",
+      "name": "Blind Typing Tutor",
+      "description": "Learn touch typing with finger placement guidance and a virtual keyboard.",
+      "category": "Typing"
+    },
+    {
+      "slug": "keyboard-ghosting-test",
+      "name": "Keyboard Ghosting Test",
+      "description": "Test how many keys your keyboard can register simultaneously.",
+      "category": "Typing"
+    },
+    {
+      "slug": "text-expander-generator",
+      "name": "Text Expander Generator",
+      "description": "Generate custom shortcut-to-text expansion logic for productivity workflows.",
+      "category": "Typing"
+    },
+    {
+      "slug": "wpm-to-kph-converter",
+      "name": "WPM to KPH Converter",
+      "description": "Convert words-per-minute speed into keystrokes per minute and per hour.",
+      "category": "Typing"
+    },
+    {
+      "slug": "distraction-free-notepad",
+      "name": "Distraction-Free Notepad",
+      "description": "Minimal writing space with auto-save in browser storage and fullscreen mode.",
+      "category": "Typing"
+    },
+    {
       "slug": "password-generator",
       "name": "Secure Password Generator",
       "description": "Generate strong, secure, and random passwords locally in your browser.",
@@ -128,9 +176,129 @@
     },
     {
       "slug": "emi-calculator",
-      "name": "Loan / EMI Calculator",
+      "name": "EMI Calculator",
       "description": "Calculate your Equated Monthly Installment (EMI) with a visual breakdown of principal and interest.",
       "category": "Utility"
+    },
+    {
+      "slug": "sip-calculator",
+      "name": "SIP Calculator",
+      "description": "Estimate maturity amount for monthly SIP investments with returns breakdown.",
+      "category": "Finance"
+    },
+    {
+      "slug": "lumpsum-calculator",
+      "name": "Lumpsum Calculator",
+      "description": "Calculate future value of one-time investments using expected annual returns.",
+      "category": "Finance"
+    },
+    {
+      "slug": "swp-calculator",
+      "name": "SWP Calculator",
+      "description": "Plan monthly withdrawals from a corpus and estimate remaining investment value.",
+      "category": "Finance"
+    },
+    {
+      "slug": "step-up-sip-calculator",
+      "name": "Step-Up SIP Calculator",
+      "description": "Project wealth growth when SIP contributions increase every year.",
+      "category": "Finance"
+    },
+    {
+      "slug": "mf-calculator",
+      "name": "MF Calculator",
+      "description": "Estimate mutual fund SIP growth with monthly contributions and expected returns.",
+      "category": "Finance"
+    },
+    {
+      "slug": "brokerage-calculator",
+      "name": "Brokerage Calculator",
+      "description": "Calculate brokerage and other trading charges for equity transactions.",
+      "category": "Finance"
+    },
+    {
+      "slug": "rd-calculator",
+      "name": "RD Calculator",
+      "description": "Estimate recurring deposit maturity based on monthly deposit and tenure.",
+      "category": "Finance"
+    },
+    {
+      "slug": "fd-calculator",
+      "name": "FD Calculator",
+      "description": "Compute fixed deposit maturity amount and total interest earned.",
+      "category": "Finance"
+    },
+    {
+      "slug": "ppf-calculator",
+      "name": "PPF Calculator",
+      "description": "Plan Public Provident Fund investments and estimate long-term corpus.",
+      "category": "Finance"
+    },
+    {
+      "slug": "ssy-calculator",
+      "name": "SSY Calculator",
+      "description": "Estimate Sukanya Samriddhi Yojana maturity value from yearly contributions.",
+      "category": "Finance"
+    },
+    {
+      "slug": "epf-calculator",
+      "name": "EPF Calculator",
+      "description": "Calculate EPF corpus with employee and employer contributions over time.",
+      "category": "Finance"
+    },
+    {
+      "slug": "income-tax-calculator",
+      "name": "Income Tax Calculator",
+      "description": "Estimate annual tax liability after deductions with slab-wise taxation.",
+      "category": "Finance"
+    },
+    {
+      "slug": "tds-calculator",
+      "name": "TDS Calculator",
+      "description": "Calculate tax deducted at source (TDS) on payments with threshold support.",
+      "category": "Finance"
+    },
+    {
+      "slug": "gst-calculator",
+      "name": "GST Calculator",
+      "description": "Add GST to a base amount and generate quick invoice totals.",
+      "category": "Finance"
+    },
+    {
+      "slug": "salary-calculator",
+      "name": "Salary Calculator",
+      "description": "Break down gross package, deductions, and estimated take-home salary.",
+      "category": "Finance"
+    },
+    {
+      "slug": "hra-calculator",
+      "name": "HRA Calculator",
+      "description": "Estimate HRA exemption and taxable HRA using salary and rent inputs.",
+      "category": "Finance"
+    },
+    {
+      "slug": "margin-calculator",
+      "name": "Margin Calculator",
+      "description": "Evaluate leveraged trade exposure and potential profit or loss.",
+      "category": "Finance"
+    },
+    {
+      "slug": "stock-average-calculator",
+      "name": "Stock Average Calculator",
+      "description": "Compute total invested cost when averaging stock purchase prices.",
+      "category": "Finance"
+    },
+    {
+      "slug": "home-loan-emi-calculator",
+      "name": "Home Loan EMI Calculator",
+      "description": "Calculate monthly EMI, total interest, and repayment for home loans.",
+      "category": "Finance"
+    },
+    {
+      "slug": "car-loan-emi-calculator",
+      "name": "Car Loan EMI Calculator",
+      "description": "Estimate EMI and total repayment for car loans with customizable tenure.",
+      "category": "Finance"
     },
     {
       "slug": "compound-interest-calculator",
@@ -155,6 +323,78 @@
       "name": "Internet Speed Test",
       "description": "Check your download, upload, and ping speeds instantly using our embedded speed test.",
       "category": "Utility"
+    },
+    {
+      "slug": "live-train-status",
+      "name": "Live Train Status",
+      "description": "Track real-time train movement with route timeline, current station, and delays.",
+      "category": "Train"
+    },
+    {
+      "slug": "pnr-status-checker",
+      "name": "PNR Status Checker",
+      "description": "Check seat confirmation, chart status, and booking progression instantly.",
+      "category": "Train"
+    },
+    {
+      "slug": "trains-between-stations",
+      "name": "Trains Between Stations",
+      "description": "Find trains for any source-destination pair with timing and class availability.",
+      "category": "Train"
+    },
+    {
+      "slug": "seat-availability",
+      "name": "Seat Availability",
+      "description": "View berth availability trend for upcoming travel dates in your selected class.",
+      "category": "Train"
+    },
+    {
+      "slug": "fare-calculator",
+      "name": "Fare Calculator",
+      "description": "Calculate approximate ticket fare including reservation, surcharge, and GST.",
+      "category": "Train"
+    },
+    {
+      "slug": "live-station-board",
+      "name": "Live Station Board",
+      "description": "See live arrivals and departures at a station for the next few hours.",
+      "category": "Train"
+    },
+    {
+      "slug": "train-time-table",
+      "name": "Train Time Table",
+      "description": "Browse complete route schedule with arrival, departure, and halt details.",
+      "category": "Train"
+    },
+    {
+      "slug": "coach-position-finder",
+      "name": "Coach Position Finder",
+      "description": "Find expected coach order and position guidance before train arrival.",
+      "category": "Train"
+    },
+    {
+      "slug": "platform-locator",
+      "name": "Platform Locator",
+      "description": "Estimate likely platform number from recent historical station records.",
+      "category": "Train"
+    },
+    {
+      "slug": "cancelled-train-list",
+      "name": "Cancelled Train List",
+      "description": "Check fully and partially cancelled trains for the selected date.",
+      "category": "Train"
+    },
+    {
+      "slug": "rescheduled-trains",
+      "name": "Rescheduled Trains",
+      "description": "Get live updates for delayed and rescheduled trains with revised timings.",
+      "category": "Train"
+    },
+    {
+      "slug": "seat-map-layout",
+      "name": "Seat Map/Layout",
+      "description": "View visual berth layouts for Sleeper, 3A, 2A, and Chair Car coaches.",
+      "category": "Train"
     },
     {
       "slug": "youtube-thumbnail-downloader",
@@ -190,6 +430,72 @@
       "slug": "image-resizer",
       "name": "Image Resizer",
       "description": "Resize your images instantly with live dimension previews.",
+      "category": "Image"
+    },
+    {
+      "slug": "bulk-image-resizer",
+      "name": "Bulk Image Resizer",
+      "description": "Resize multiple images by exact pixel dimensions or percentage with live comparison.",
+      "category": "Image"
+    },
+    {
+      "slug": "advanced-image-cropper",
+      "name": "Advanced Image Cropper",
+      "description": "Crop with ratio presets and rotation controls using a live crop box preview.",
+      "category": "Image"
+    },
+    {
+      "slug": "image-filter-lab",
+      "name": "Image Filter Lab",
+      "description": "Apply grayscale, sepia, blur, vintage, and dramatic effects with before/after slider.",
+      "category": "Image"
+    },
+    {
+      "slug": "brightness-contrast",
+      "name": "Brightness & Contrast",
+      "description": "Adjust exposure and tonal depth in real-time with professional preview controls.",
+      "category": "Image"
+    },
+    {
+      "slug": "hue-saturation-lightness",
+      "name": "Hue, Saturation & Lightness",
+      "description": "Fine-tune hue, saturation, and lightness levels for precise color balancing.",
+      "category": "Image"
+    },
+    {
+      "slug": "watermark-adder-text-image",
+      "name": "Watermark Adder (Text/Image)",
+      "description": "Add draggable text or logo watermarks with live positioning and instant export.",
+      "category": "Image"
+    },
+    {
+      "slug": "photo-to-sketch-cartoon",
+      "name": "Photo to Sketch/Cartoon",
+      "description": "Convert photos into sketch or cartoon style with a comparison slider preview.",
+      "category": "Image"
+    },
+    {
+      "slug": "round-corners-borders",
+      "name": "Round Corners & Borders",
+      "description": "Create polished visuals with custom corner radius and border styling.",
+      "category": "Image"
+    },
+    {
+      "slug": "image-flip-mirror",
+      "name": "Image Flip & Mirror",
+      "description": "Flip images horizontally or vertically with instant before/after visual output.",
+      "category": "Image"
+    },
+    {
+      "slug": "meme-generator",
+      "name": "Meme Generator",
+      "description": "Compose memes with top and bottom text overlays and downloadable output.",
+      "category": "Image"
+    },
+    {
+      "slug": "object-remover-inpainting",
+      "name": "Object Remover (Inpainting)",
+      "description": "Paint over unwanted areas and preview cleanup using inpainting-style processing.",
       "category": "Image"
     },
     {

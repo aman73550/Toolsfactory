@@ -2,9 +2,9 @@ import React, { useState, useRef } from 'react';
 import { FileUp, Image as ImageIcon, Download, Shield, Loader2, Archive } from 'lucide-react';
 import * as pdfjsLib from 'pdfjs-dist';
 import JSZip from 'jszip';
+import { configurePdfWorker } from '../lib/pdf-worker';
 
-// Configure PDF.js worker
-pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
+configurePdfWorker();
 
 export default function PdfToJpg() {
   const [file, setFile] = useState<File | null>(null);
@@ -58,7 +58,7 @@ export default function PdfToJpg() {
         context.fillStyle = '#ffffff';
         context.fillRect(0, 0, canvas.width, canvas.height);
         
-        await page.render({ canvasContext: context, viewport }).promise;
+        await page.render({ canvas, canvasContext: context, viewport }).promise;
         newImages.push(canvas.toDataURL('image/jpeg', 0.9));
       }
       

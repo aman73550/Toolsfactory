@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Upload, Download, Image as ImageIcon, Loader2, Shield } from 'lucide-react';
-import imglyRemoveBackground from '@imgly/background-removal';
+import { removeBackground } from '@imgly/background-removal';
 
 export default function BackgroundRemover() {
   const [originalImage, setOriginalImage] = useState<string | null>(null);
@@ -30,7 +30,7 @@ export default function BackgroundRemover() {
     setProgress(0);
 
     try {
-      const imageBlob = await imglyRemoveBackground(file, {
+      const imageBlob = await removeBackground(file, {
         progress: (key, current, total) => {
           if (total > 0) {
             setProgress(Math.round((current / total) * 100));

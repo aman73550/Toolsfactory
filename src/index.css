@@ -1,6 +1,98 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap');
 @import "tailwindcss";
 
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+:root {
+  --color-base: #ffffff;
+  --color-structure: #1e293b;
+  --color-border: #e2e8f0;
+  --color-action: #4f46e5;
+  --ambient-1: 0 1px 2px rgba(30, 41, 59, 0.06);
+  --ambient-2: 0 8px 28px rgba(30, 41, 59, 0.08);
+  --ambient-3: 0 18px 40px rgba(30, 41, 59, 0.09);
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+  background: var(--color-base);
+  color: var(--color-structure);
+}
+
+body {
+  margin: 0;
+  font-feature-settings: "cv11", "ss01";
+}
+
+.surface-blob {
+  position: relative;
+  isolation: isolate;
+}
+
+.surface-blob::before,
+.surface-blob::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+  width: 420px;
+  height: 420px;
+  border-radius: 9999px;
+  background: radial-gradient(circle at 40% 40%, #ffecec 0%, rgba(255, 236, 236, 0.2) 55%, transparent 72%);
+  filter: blur(120px);
+}
+
+.surface-blob::before {
+  top: -160px;
+  left: -140px;
+}
+
+.surface-blob::after {
+  right: -140px;
+  bottom: 80px;
+}
+
+.premium-card {
+  background: var(--color-base);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--ambient-1);
+  transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 260ms cubic-bezier(0.22, 1, 0.36, 1), border-color 260ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.premium-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--ambient-2);
+  border-color: #cbd5e1;
+}
+
+.primary-action {
+  background: var(--color-action);
+  color: #fff;
+  transition: transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 220ms cubic-bezier(0.22, 1, 0.36, 1), background-color 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.primary-action:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--ambient-2);
+}
+
+.primary-action:active {
+  transform: scale(0.98);
+}
+
+.glass-header {
+  backdrop-filter: blur(12px);
+}
+
+.glass-scrim {
+  backdrop-filter: blur(12px);
+  background: rgba(15, 23, 42, 0.2);
+}
+
+.typing-mono {
+  font-family: "JetBrains Mono", "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
