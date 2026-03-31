@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { Settings2, Wrench, Search, Github, Twitter, Linkedin, Clock3, X } from 'lucide-react';
+import { Wrench, Search, Github, Twitter, Linkedin, Clock3, X } from 'lucide-react';
 
 type LimitState = {
   open: boolean;
@@ -76,15 +76,6 @@ export default function Layout() {
                 }`}
               >
                 Tools
-              </Link>
-              <Link
-                to="/admin"
-                className={`flex items-center gap-1.5 text-sm font-medium transition-colors ${
-                  location.pathname === '/admin' ? 'text-indigo-600' : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                <Settings2 className="w-4 h-4" />
-                Admin
               </Link>
             </nav>
           </div>
