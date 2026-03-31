@@ -14,9 +14,6 @@ export default function Home() {
   const [tools, setTools] = useState<Tool[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
-  const [activeCategory, setActiveCategory] = useState('');
-  const [selectedTool, setSelectedTool] = useState<Tool | null>(null);
-  const [visibleToolCount, setVisibleToolCount] = useState(12);
   const navigate = useNavigate();
   const searchRef = useRef<HTMLDivElement>(null);
 
@@ -35,31 +32,10 @@ export default function Home() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const filteredTools = tools.filter(tool => 
-    tool.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+  const filteredTools = tools.filter(tool =>
+    tool.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     tool.description.toLowerCase().includes(searchQuery.toLowerCase())
-  ).slice(0, 6); // Max 6 results in dropdown
-
-  const popularSlugs = ['youtube-downloader', 'image-compress', 'reorder-pdf', 'qr-code-generator'];
-  const popularTools = tools.filter(t => popularSlugs.includes(t.slug));
-  // Fallback if specific slugs aren't found
-  const displayPopular = popularTools.length > 0 ? popularTools : tools.slice(0, 4);
-  const categories = Array.from(new Set(tools.map(tool => tool.category))).sort((a, b) => a.localeCompare(b));
-
-  useEffect(() => {
-    if (!activeCategory && categories.length > 0) {
-      setActiveCategory(categories[0]);
-    }
-  }, [activeCategory, categories]);
-
-  useEffect(() => {
-    setVisibleToolCount(12);
-  }, [activeCategory]);
-
-  const toolsInActiveCategory = tools
-    .filter(tool => tool.category === activeCategory)
-    .sort((a, b) => a.name.localeCompare(b.name));
-  const visibleToolsInCategory = toolsInActiveCategory.slice(0, visibleToolCount);
+  ).slice(0, 6);
 
   return (
     <div className="min-h-[80vh] flex flex-col">
@@ -88,12 +64,10 @@ export default function Home() {
                 placeholder="Search tools (e.g., 'PDF', 'Compress', 'Image')..."
                 className="w-full px-4 py-4 text-lg bg-transparent border-none outline-none text-slate-800 placeholder:text-slate-400"
               />
-              <button 
+              <button
                 onClick={() => {
                   if (filteredTools.length > 0) {
-                    const firstMatch = filteredTools[0];
-                    setActiveCategory(firstMatch.category);
-                    setSelectedTool(firstMatch);
+                    navigate(`/tools/${filteredTools[0].slug}`);
                     setIsSearchFocused(false);
                   }
                 }}
@@ -113,8 +87,7 @@ export default function Home() {
                         <button
                           type="button"
                           onClick={() => {
-                            setActiveCategory(tool.category);
-                            setSelectedTool(tool);
+                            navigate(`/tools/${tool.slug}`);
                             setIsSearchFocused(false);
                           }}
                           className="flex items-center gap-4 px-4 py-3 hover:bg-slate-50 transition-colors"
@@ -142,119 +115,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Below the Fold: Most Popular & Why Choose Us */}
+      {/* Why Choose Us */}
       <section className="bg-slate-50 border-t border-slate-200 py-16 px-4">
-        <div className="max-w-6xl mx-auto space-y-16">
-
-          {/* Browse Tools By Category */}
-          {categories.length > 0 && (
-            <div className="space-y-6">
-              <div className="text-center space-y-2">
-                <h3 className="text-sm font-bold tracking-widest text-slate-400 uppercase">Browse By Category</h3>
-                <p className="text-slate-600 text-sm">Select a category, choose a tool, then open it manually.</p>
-              </div>
-
-              <div className="flex flex-wrap justify-center gap-2">
-                {categories.map(category => (
-                  <button
-                    key={category}
-                    onClick={() => {
-                      setActiveCategory(category);
-                      setSelectedTool(null);
-                    }}
-                    className={cn(
-                      'px-4 py-2 rounded-full border text-sm font-medium transition-colors',
-                      activeCategory === category
-                        ? 'bg-slate-900 text-white border-slate-900'
-                        : 'bg-white text-slate-700 border-slate-300 hover:border-slate-400'
-                    )}
-                  >
-                    {category}
-                  </button>
-                ))}
-              </div>
-
-              <div className="bg-white border border-slate-200 rounded-2xl p-5 space-y-5">
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-                  <h4 className="font-semibold text-slate-900">
-                    {activeCategory} Tools ({toolsInActiveCategory.length})
-                  </h4>
-                  <button
-                    onClick={() => selectedTool && navigate(`/tools/${selectedTool.slug}`)}
-                    disabled={!selectedTool}
-                    className={cn(
-                      'inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-colors',
-                      selectedTool
-                        ? 'bg-indigo-600 text-white hover:bg-indigo-700'
-                        : 'bg-slate-200 text-slate-500 cursor-not-allowed'
-                    )}
-                  >
-                    Open Selected Tool <ArrowRight className="w-4 h-4" />
-                  </button>
-                </div>
-
-                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                  {visibleToolsInCategory.map(tool => (
-                    <button
-                      key={tool.slug}
-                      type="button"
-                      onClick={() => setSelectedTool(tool)}
-                      className={cn(
-                        'text-left border rounded-xl p-4 transition-colors',
-                        selectedTool?.slug === tool.slug
-                          ? 'border-indigo-500 bg-indigo-50/70'
-                          : 'border-slate-200 bg-white hover:border-slate-300'
-                      )}
-                    >
-                      <p className="font-semibold text-slate-900 text-sm mb-1">{tool.name}</p>
-                      <p className="text-xs text-slate-600 line-clamp-2">{tool.description}</p>
-                    </button>
-                  ))}
-                </div>
-
-                {toolsInActiveCategory.length > visibleToolsInCategory.length && (
-                  <div className="flex justify-center">
-                    <button
-                      type="button"
-                      onClick={() => setVisibleToolCount((prev) => prev + 12)}
-                      className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium border border-slate-300 text-slate-700 hover:border-slate-400"
-                    >
-                      Show More Tools <ChevronRight className="w-4 h-4" />
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-          
-          {/* Most Popular Tools */}
-          {displayPopular.length > 0 && (
-            <div>
-              <h3 className="text-sm font-bold tracking-widest text-slate-400 uppercase mb-6 text-center">Most Popular Tools</h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {displayPopular.map(tool => (
-                  <div 
-                    key={tool.slug}
-                    className="flex flex-col items-center p-6 bg-white rounded-2xl border border-slate-200 text-center"
-                  >
-                    <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center mb-4 transition-transform">
-                      <Settings className="w-6 h-6" />
-                    </div>
-                    <h4 className="font-semibold text-slate-800 text-sm mb-3">{tool.name}</h4>
-                    <button
-                      onClick={() => navigate(`/tools/${tool.slug}`)}
-                      className="inline-flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg bg-slate-900 text-white hover:bg-slate-800"
-                    >
-                      Open <ArrowRight className="w-3 h-3" />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Why Choose Us */}
-          <div className="grid md:grid-cols-3 gap-8 text-center pt-8 border-t border-slate-200">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-3 gap-8 text-center">
             <div className="space-y-3">
               <div className="w-12 h-12 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto">
                 <Zap className="w-6 h-6" />
@@ -277,7 +141,6 @@ export default function Home() {
               <p className="text-sm text-slate-600">Access professional-grade utilities without subscriptions, hidden fees, or annoying watermarks.</p>
             </div>
           </div>
-
         </div>
       </section>
     </div>
