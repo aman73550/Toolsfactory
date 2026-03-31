@@ -1,8 +1,12 @@
 import express from 'express';
+import cookieParser from 'cookie-parser';
 import { createServer as createViteServer } from 'vite';
 import path from 'path';
 import fs from 'fs';
 import { GoogleGenAI } from '@google/genai';
+import adminAuthRouter from './src/server/api/admin-auth';
+import masterAdminRouter from './src/server/api/master-admin';
+import { adminAuthMiddleware } from './src/server/middleware/admin-auth';
 
 type RateLimitBucket = {
   startAt: number;
@@ -129,6 +133,7 @@ async function startServer() {
   const PORT = 3000;
 
   app.use(express.json());
+  app.use(cookieParser());
 
   app.use((req, _res, next) => {
     metrics.totalRequests += 1;
@@ -138,6 +143,12 @@ async function startServer() {
     }
     next();
   });
+
+  // Admin authentication routes (no rate limiting)
+  app.use('/api/admin/auth', adminAuthRouter);
+
+  // Protected admin routes (require authentication)
+  app.use('/api/admin', adminAuthMiddleware, masterAdminRouter);
 
   app.use('/api', (req, res, next) => {
     const isAdminStatus = req.path === '/admin/status';
