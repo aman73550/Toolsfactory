@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Search, Zap, Shield, Heart, ArrowRight, Settings, ChevronRight } from 'lucide-react';
 import { cn } from '../lib/utils';
 
@@ -16,6 +16,7 @@ export default function Home() {
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [activeCategory, setActiveCategory] = useState('');
   const [selectedTool, setSelectedTool] = useState<Tool | null>(null);
+  const [visibleToolCount, setVisibleToolCount] = useState(12);
   const navigate = useNavigate();
   const searchRef = useRef<HTMLDivElement>(null);
 
@@ -51,9 +52,14 @@ export default function Home() {
     }
   }, [activeCategory, categories]);
 
+  useEffect(() => {
+    setVisibleToolCount(12);
+  }, [activeCategory]);
+
   const toolsInActiveCategory = tools
     .filter(tool => tool.category === activeCategory)
     .sort((a, b) => a.name.localeCompare(b.name));
+  const visibleToolsInCategory = toolsInActiveCategory.slice(0, visibleToolCount);
 
   return (
     <div className="min-h-[80vh] flex flex-col">
@@ -85,12 +91,15 @@ export default function Home() {
               <button 
                 onClick={() => {
                   if (filteredTools.length > 0) {
-                    navigate(`/tools/${filteredTools[0].slug}`);
+                    const firstMatch = filteredTools[0];
+                    setActiveCategory(firstMatch.category);
+                    setSelectedTool(firstMatch);
+                    setIsSearchFocused(false);
                   }
                 }}
                 className="hidden sm:flex items-center gap-2 px-6 py-2 mr-2 bg-slate-900 text-white rounded-xl font-medium hover:bg-slate-800 transition-colors"
               >
-                Explore <ArrowRight className="w-4 h-4" />
+                Select First Match <ChevronRight className="w-4 h-4" />
               </button>
             </div>
 
@@ -101,9 +110,13 @@ export default function Home() {
                   <ul className="py-2">
                     {filteredTools.map(tool => (
                       <li key={tool.slug}>
-                        <Link 
-                          to={`/tools/${tool.slug}`}
-                          onClick={() => setIsSearchFocused(false)}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setActiveCategory(tool.category);
+                            setSelectedTool(tool);
+                            setIsSearchFocused(false);
+                          }}
                           className="flex items-center gap-4 px-4 py-3 hover:bg-slate-50 transition-colors"
                         >
                           <div className="p-2 bg-indigo-50 text-indigo-600 rounded-lg">
@@ -114,7 +127,7 @@ export default function Home() {
                             <p className="text-xs text-slate-500 truncate">{tool.description}</p>
                           </div>
                           <ChevronRight className="w-4 h-4 text-slate-400" />
-                        </Link>
+                        </button>
                       </li>
                     ))}
                   </ul>
@@ -181,7 +194,7 @@ export default function Home() {
                 </div>
 
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                  {toolsInActiveCategory.map(tool => (
+                  {visibleToolsInCategory.map(tool => (
                     <button
                       key={tool.slug}
                       type="button"
@@ -198,6 +211,18 @@ export default function Home() {
                     </button>
                   ))}
                 </div>
+
+                {toolsInActiveCategory.length > visibleToolsInCategory.length && (
+                  <div className="flex justify-center">
+                    <button
+                      type="button"
+                      onClick={() => setVisibleToolCount((prev) => prev + 12)}
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium border border-slate-300 text-slate-700 hover:border-slate-400"
+                    >
+                      Show More Tools <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           )}
