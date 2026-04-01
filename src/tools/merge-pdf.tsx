@@ -5,9 +5,9 @@
  */
 
 import React, { useState, useRef } from 'react';
-import { FileUp, Download, Shield, Plus, Eye } from 'lucide-react';
+import { FileUp, Download, Shield, Plus } from 'lucide-react';
 import { PDFDocument } from 'pdf-lib';
-import { generatePdfThumbnails, clearPdfPreviewCache } from '../lib/pdf-preview-engine';
+import { generatePdfThumbnails, clearPdfPreviewCache, getPdfPageCount } from '../lib/pdf-preview-engine';
 import { DraggablePdfGrid, DraggablePageItem } from '../components/pdf/DraggablePdfGrid';
 import { PdfThumbnailSkeleton } from '../components/pdf/PdfSkeleton';
 import { PdfInfoBar } from '../components/pdf/PdfPreview';
@@ -16,6 +16,7 @@ interface MergePdfFile {
   id: string;
   file: File;
   pages: DraggablePageItem[];
+  totalPages: number;
   isLoading: boolean;
   error?: string;
 }
@@ -24,7 +25,6 @@ export default function MergePdf() {
   const [pdfFiles, setPdfFiles] = useState<MergePdfFile[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
-  const [expandedFileId, setExpandedFileId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileUpload = async (
@@ -52,18 +52,22 @@ export default function MergePdf() {
         id,
         file: pdfFile,
         pages: [],
+        totalPages: 0,
         isLoading: true,
       };
 
       setPdfFiles(prev => [...prev, newMergePdf]);
 
       try {
-        const pages = await generatePdfThumbnails(pdfFile, 20); // Load up to 20 pages
+        const totalPages = await getPdfPageCount(pdfFile);
+        const pages = await generatePdfThumbnails(pdfFile, Math.min(totalPages, 20));
+
         setPdfFiles(prev =>
           prev.map(f =>
             f.id === id
               ? {
                   ...f,
+                  totalPages,
                   pages: pages.map((page, idx) => ({
                     id: `${id}-page-${page.pageNumber}`,
                     pageNumber: page.pageNumber,
@@ -75,7 +79,6 @@ export default function MergePdf() {
               : f
           )
         );
-        setExpandedFileId(id);
       } catch (error) {
         setPdfFiles(prev =>
           prev.map(f =>
@@ -83,7 +86,7 @@ export default function MergePdf() {
               ? {
                   ...f,
                   isLoading: false,
-                  error: 'Failed to load PDF preview',
+                  error: 'Failed to load PDF preview. Try another file or re-upload.',
                 }
               : f
           )
@@ -218,20 +221,14 @@ export default function MergePdf() {
                 >
                   {/* File Header */}
                   <div className="p-4 bg-white border-b border-slate-200 flex items-center justify-between">
-                    <button
-                      onClick={() =>
-                        setExpandedFileId(expandedFileId === pdfFile.id ? null : pdfFile.id)
-                      }
-                      className="flex items-center gap-3 flex-1 text-left hover:bg-slate-50 p-2 rounded transition-colors"
-                    >
-                      <Eye size={20} className="text-indigo-600" />
+                    <div className="flex items-center gap-3 flex-1 p-2">
                       <div>
                         <p className="font-medium text-slate-900">{pdfFile.file.name}</p>
                         <p className="text-xs text-slate-500">
-                          {pdfFile.pages.length} pages • {(pdfFile.file.size / 1024 / 1024).toFixed(2)} MB
+                          {pdfFile.totalPages || pdfFile.pages.length} pages • {(pdfFile.file.size / 1024 / 1024).toFixed(2)} MB
                         </p>
                       </div>
-                    </button>
+                    </div>
                     <div className="flex items-center gap-2">
                       <span className="text-xs font-medium text-slate-600 bg-white px-3 py-1 rounded-full border border-slate-200">
                         #{fileIndex + 1}
@@ -245,28 +242,28 @@ export default function MergePdf() {
                     </div>
                   </div>
 
-                  {/* Expandable Preview */}
-                  {expandedFileId === pdfFile.id && (
-                    <div className="p-6">
-                      {pdfFile.isLoading ? (
-                        <PdfThumbnailSkeleton count={5} />
-                      ) : pdfFile.error ? (
-                        <div className="text-center py-8 text-red-600">
-                          <p>{pdfFile.error}</p>
-                        </div>
-                      ) : (
-                        <DraggablePdfGrid
-                          pages={pdfFile.pages}
-                          onReorder={(pages) => handleReorderPages(pdfFile.id, pages)}
-                          onDelete={(id) => {
-                            // Delete specific page
-                            const newPages = pdfFile.pages.filter(p => p.id !== id);
-                            handleReorderPages(pdfFile.id, newPages);
-                          }}
-                        />
-                      )}
-                    </div>
-                  )}
+                  <div className="p-6">
+                    {pdfFile.isLoading ? (
+                      <PdfThumbnailSkeleton count={5} />
+                    ) : pdfFile.error ? (
+                      <div className="text-center py-8 text-red-600">
+                        <p>{pdfFile.error}</p>
+                      </div>
+                    ) : pdfFile.pages.length === 0 ? (
+                      <div className="text-center py-8 text-amber-600">
+                        <p>No preview pages could be rendered for this file.</p>
+                      </div>
+                    ) : (
+                      <DraggablePdfGrid
+                        pages={pdfFile.pages}
+                        onReorder={(pages) => handleReorderPages(pdfFile.id, pages)}
+                        onDelete={(id) => {
+                          const newPages = pdfFile.pages.filter(p => p.id !== id);
+                          handleReorderPages(pdfFile.id, newPages);
+                        }}
+                      />
+                    )}
+                  </div>
                 </div>
               ))}
             </div>

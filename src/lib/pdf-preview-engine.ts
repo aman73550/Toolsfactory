@@ -5,10 +5,11 @@
  */
 
 import * as pdfjsLib from 'pdfjs-dist';
+import { configurePdfWorker } from './pdf-worker';
 
 // Set up PDF.js worker
 if (typeof window !== 'undefined') {
-  pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+  configurePdfWorker();
 }
 
 export interface PdfPage {

@@ -1,10 +1,15 @@
 import React, { useState, useRef } from 'react';
 import { FileUp, FileText, FileMinus, Shield, Download } from 'lucide-react';
 import { PDFDocument } from 'pdf-lib';
+import { generatePdfThumbnails, clearPdfPreviewCache } from '../lib/pdf-preview-engine';
+import { SelectablePdfGrid, SelectablePageItem } from '../components/pdf/SelectablePdfGrid';
+import { PdfThumbnailSkeleton } from '../components/pdf/PdfSkeleton';
 
 export default function RemovePdfPages() {
   const [file, setFile] = useState<File | null>(null);
-  const [pageRange, setPageRange] = useState('');
+  const [pages, setPages] = useState<SelectablePageItem[]>([]);
+  const [selectedPages, setSelectedPages] = useState<Set<string>>(new Set());
+  const [isLoading, setIsLoading] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [totalPages, setTotalPages] = useState(0);
@@ -27,51 +32,50 @@ export default function RemovePdfPages() {
     }
 
     setFile(selectedFile);
+    setIsLoading(true);
+    setPages([]);
+    setSelectedPages(new Set());
     
     try {
       const arrayBuffer = await selectedFile.arrayBuffer();
       const pdf = await PDFDocument.load(arrayBuffer);
-      setTotalPages(pdf.getPageCount());
+      const pageCount = pdf.getPageCount();
+      setTotalPages(pageCount);
+
+      const pdfPages = await generatePdfThumbnails(selectedFile, 80);
+      const selectablePages = pdfPages.map((page) => ({
+        id: `page-${page.pageNumber}`,
+        pageNumber: page.pageNumber,
+        thumbnail: page.thumbnail || '',
+      }));
+      setPages(selectablePages);
     } catch (err) {
       console.error(err);
       alert('Could not read the PDF file. It might be corrupted or password protected.');
       setFile(null);
+      setPages([]);
+      setSelectedPages(new Set());
+    } finally {
+      setIsLoading(false);
     }
-  };
-
-  const parsePageRange = (rangeStr: string, maxPages: number): number[] => {
-    const pages = new Set<number>();
-    const parts = rangeStr.split(',').map(p => p.trim());
-    
-    for (const part of parts) {
-      if (part.includes('-')) {
-        const [start, end] = part.split('-').map(n => parseInt(n.trim()));
-        if (!isNaN(start) && !isNaN(end) && start <= end && start >= 1 && end <= maxPages) {
-          for (let i = start; i <= end; i++) pages.add(i - 1);
-        }
-      } else {
-        const page = parseInt(part);
-        if (!isNaN(page) && page >= 1 && page <= maxPages) {
-          pages.add(page - 1);
-        }
-      }
-    }
-    
-    return Array.from(pages).sort((a, b) => a - b);
   };
 
   const removePages = async () => {
     if (!file) return;
-    if (!pageRange.trim()) {
-      alert('Please enter pages to remove (e.g., 1-3, 5).');
+    if (selectedPages.size === 0) {
+      alert('Please select at least one page to remove.');
       return;
     }
     
     setIsProcessing(true);
     try {
-      const indicesToRemove = parsePageRange(pageRange, totalPages);
+      const indicesToRemove = Array.from(selectedPages)
+        .map((id) => Number(id.replace('page-', '')) - 1)
+        .filter((idx) => Number.isInteger(idx) && idx >= 0)
+        .sort((a, b) => a - b);
+
       if (indicesToRemove.length === 0) {
-        alert('Invalid page range. Please check your input.');
+        alert('Please select valid pages to remove.');
         setIsProcessing(false);
         return;
       }
@@ -103,6 +107,12 @@ export default function RemovePdfPages() {
       a.click();
       URL.revokeObjectURL(url);
       a.remove();
+
+      setFile(null);
+      setPages([]);
+      setSelectedPages(new Set());
+      setTotalPages(0);
+      clearPdfPreviewCache();
     } catch (error) {
       console.error('Error removing pages:', error);
       alert('An error occurred while processing the PDF.');
@@ -158,34 +168,39 @@ export default function RemovePdfPages() {
                 </div>
               </div>
               <button 
-                onClick={() => { setFile(null); setPageRange(''); setTotalPages(0); }}
+                onClick={() => {
+                  setFile(null);
+                  setPages([]);
+                  setSelectedPages(new Set());
+                  setTotalPages(0);
+                  clearPdfPreviewCache();
+                }}
                 className="text-sm text-indigo-600 hover:text-indigo-800 font-medium underline"
               >
                 Change File
               </button>
             </div>
 
-            <div className="space-y-4">
-              <label className="block text-sm font-medium text-slate-700">
-                Pages to Remove
-              </label>
-              <input
-                type="text"
-                value={pageRange}
-                onChange={(e) => setPageRange(e.target.value)}
-                placeholder="e.g., 2, 4-6"
-                className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all text-lg"
-              />
-              <p className="text-sm text-slate-500">
-                Enter the page numbers you want to delete, separated by commas. Example: 2, 4-6
-              </p>
+            <div className="space-y-3">
+              <p className="text-sm font-medium text-slate-700">Select pages to remove</p>
+              {isLoading ? (
+                <PdfThumbnailSkeleton count={6} />
+              ) : (
+                <SelectablePdfGrid
+                  pages={pages}
+                  selectedIds={selectedPages}
+                  onSelectionChange={setSelectedPages}
+                  mode="multi"
+                  isLoading={isProcessing}
+                />
+              )}
             </div>
 
             <div className="pt-4 flex justify-end">
               <button 
                 onClick={removePages}
-                disabled={isProcessing || !pageRange.trim()}
-                className={`flex items-center gap-2 px-8 py-4 rounded-xl font-medium transition-colors shadow-sm ${isProcessing || !pageRange.trim() ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'bg-red-600 text-white hover:bg-red-700'}`}
+                disabled={isProcessing || selectedPages.size === 0}
+                className={`flex items-center gap-2 px-8 py-4 rounded-xl font-medium transition-colors shadow-sm ${isProcessing || selectedPages.size === 0 ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'bg-red-600 text-white hover:bg-red-700'}`}
               >
                 {isProcessing ? (
                   <>Processing...</>
