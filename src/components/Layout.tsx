@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { Github, Twitter, Linkedin, Clock3, X } from 'lucide-react';
+import { Github, Twitter, Linkedin, Clock3, X, Wrench } from 'lucide-react';
 import { StickyHeader } from './layout/StickyHeader';
 
 type LimitState = {
@@ -45,7 +45,7 @@ export default function Layout() {
     <div className="surface-blob min-h-screen bg-white font-sans text-slate-900 flex flex-col">
       <StickyHeader />
 
-      <main className="flex-1 w-full">
+      <main className="flex-1 w-full pt-16">
         <Outlet />
       </main>
 
