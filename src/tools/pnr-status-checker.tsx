@@ -25,7 +25,12 @@ export default function PnrStatusChecker() {
     setLoading(true);
     setError('');
     try {
-      const response = await fetchTrainApi<PnrResponse>(`/api/train/pnr-status?pnr=${pnr}`);
+      let response: PnrResponse;
+      try {
+        response = await fetchTrainApi<PnrResponse>(`/api/train/pnr-status?pnr=${pnr}`);
+      } catch {
+        response = await fetchTrainApi<PnrResponse>(`/api/train/pnr?pnr=${pnr}`);
+      }
       setData(response);
     } catch (err: any) {
       setError(err.message || 'Unable to fetch PNR status.');

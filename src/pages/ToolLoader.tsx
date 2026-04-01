@@ -87,16 +87,9 @@ export default function ToolLoader() {
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }} />
       )}
 
-      {/* Section 1: Tool Hero (The Utility) */}
-      <section className="bg-white border-b border-slate-200 pt-8 pb-12">
+      {/* Section 1: Tool UI */}
+      <section className="bg-white border-b border-slate-200 py-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {toolConfig && (
-            <div className="text-center mb-10">
-              <h1 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">{toolConfig.name}</h1>
-              <p className="text-lg text-slate-600 max-w-2xl mx-auto">{toolConfig.description}</p>
-            </div>
-          )}
-          
           <div className="w-full">
             <Suspense fallback={<SkeletonLoader />}>
               <ToolComponent />

@@ -2,6 +2,12 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "buildCommand": "npm run build",
   "devCommand": "npm run dev",
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/[...route].ts"
+    }
+  ],
   "env": {
     "NODE_ENV": "production"
   }
