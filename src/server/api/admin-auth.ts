@@ -46,9 +46,9 @@ router.post('/login', async (req: Request, res: Response) => {
     res.cookie('admin_session', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: 'lax',
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
-      path: '/api/admin',
+      path: '/api',
     });
 
     // Calculate expiry time
@@ -82,7 +82,7 @@ router.get('/verify', adminAuthMiddleware, (req: Request, res: Response) => {
  * Clear admin session
  */
 router.post('/logout', (req: Request, res: Response) => {
-  res.clearCookie('admin_session', { path: '/api/admin' });
+  res.clearCookie('admin_session', { path: '/api' });
   return res.json({ success: true, message: 'Logged out' });
 });
 
