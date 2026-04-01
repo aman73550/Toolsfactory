@@ -2,6 +2,7 @@
  * SEO Metadata System
  * Automatically generates SEO-optimized metadata for tools
  */
+import React from 'react';
 
 export interface ToolMetadata {
   slug: string;
@@ -127,7 +128,7 @@ export function setMetaTags(metadata: GeneratedMetadata) {
   });
 
   // JSON-LD schema
-  let schemaScript = document.querySelector('script[type="application/ld+json"]');
+  let schemaScript = document.querySelector('script[type="application/ld+json"]') as HTMLScriptElement | null;
   if (!schemaScript) {
     schemaScript = document.createElement('script');
     schemaScript.type = 'application/ld+json';
@@ -145,6 +146,3 @@ export function useToolMetadata(tool: any) {
     setMetaTags(metadata);
   }, [tool]);
 }
-
-// Add React import for the hook's useEffect
-import React from 'react';

@@ -2,6 +2,7 @@
  * Intl API Integration
  * Locale-aware formatting for dates, times, currency, and numbers
  */
+import React from 'react';
 
 export interface LocaleConfig {
   locale: string;
@@ -160,8 +161,6 @@ export function getCurrencySymbol(): string {
 /**
  * React hook for locale-aware formatting
  */
-import React from 'react';
-
 export function useLocaleFormat() {
   const config = React.useMemo(() => getLocaleConfig(), []);
 

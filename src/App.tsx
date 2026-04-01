@@ -5,6 +5,7 @@ import { ThemeProvider } from './context/ThemeContext';
 import Layout from './components/Layout';
 import AdminLayout from './components/AdminLayout';
 import Home from './pages/Home';
+import ToolsDirectory from './pages/ToolsDirectory';
 import ToolLoader from './pages/ToolLoader';
 import About from './pages/About';
 import Contact from './pages/Contact';
@@ -27,10 +28,11 @@ export default function App() {
             {/* Main Site */}
             <Route path="/" element={<Layout />}>
               <Route index element={<Home />} />
+              <Route path="tools" element={<ToolsDirectory />} />
+              <Route path="tools/:slug" element={<ToolLoader />} />
               <Route path="about" element={<About />} />
               <Route path="contact" element={<Contact />} />
               <Route path="privacy" element={<Privacy />} />
-              <Route path="tools/:slug" element={<ToolLoader />} />
             </Route>
 
             {/* Admin Portal */}

@@ -235,7 +235,7 @@ function StatCard({
   title,
   value,
   icon: Icon,
-  color = 'indigo',
+  color = 'blue',
 }: {
   title: string;
   value: number | string;

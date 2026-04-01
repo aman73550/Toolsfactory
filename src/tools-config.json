@@ -505,12 +505,6 @@
       "category": "Image"
     },
     {
-      "slug": "flip-mirror-image",
-      "name": "Flip & Mirror Image",
-      "description": "Instantly flip your images horizontally or vertically with live preview.",
-      "category": "Image"
-    },
-    {
       "slug": "round-corners",
       "name": "Round Image Corners",
       "description": "Add smooth rounded corners or make your image a perfect circle instantly.",
