@@ -1,14 +1,18 @@
 import React, { useState, useRef } from 'react';
-import { FileUp, FileText, RotateCw, Shield, Download } from 'lucide-react';
+import { FileUp, RotateCw, Shield } from 'lucide-react';
 import { PDFDocument, degrees } from 'pdf-lib';
+import { generatePdfThumbnails, clearPdfPreviewCache } from '../lib/pdf-preview-engine';
+import { SelectablePdfGrid, SelectablePageItem } from '../components/pdf/SelectablePdfGrid';
+import { PdfThumbnailSkeleton } from '../components/pdf/PdfSkeleton';
 
 export default function RotatePdf() {
   const [file, setFile] = useState<File | null>(null);
-  const [pageRange, setPageRange] = useState('');
+  const [pages, setPages] = useState<SelectablePageItem[]>([]);
+  const [selectedPages, setSelectedPages] = useState<Set<string>>(new Set());
   const [rotation, setRotation] = useState<number>(90);
+  const [isLoading, setIsLoading] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
-  const [totalPages, setTotalPages] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement> | React.DragEvent) => {
@@ -28,64 +32,49 @@ export default function RotatePdf() {
     }
 
     setFile(selectedFile);
-    
+    setIsLoading(true);
+    setPages([]);
+    setSelectedPages(new Set());
+
     try {
-      const arrayBuffer = await selectedFile.arrayBuffer();
-      const pdf = await PDFDocument.load(arrayBuffer);
-      setTotalPages(pdf.getPageCount());
-      setPageRange(`1-${pdf.getPageCount()}`);
+      const thumbnailPages = await generatePdfThumbnails(selectedFile, 50);
+      const selectablePages = thumbnailPages.map((page) => ({
+        id: `page-${page.pageNumber}`,
+        pageNumber: page.pageNumber,
+        thumbnail: page.thumbnail || '',
+      }));
+      setPages(selectablePages);
+      // Pre-select all pages by default
+      setSelectedPages(new Set(selectablePages.map(p => p.id)));
     } catch (err) {
       console.error(err);
       alert('Could not read the PDF file. It might be corrupted or password protected.');
       setFile(null);
+    } finally {
+      setIsLoading(false);
     }
-  };
-
-  const parsePageRange = (rangeStr: string, maxPages: number): number[] => {
-    if (!rangeStr.trim() || rangeStr.toLowerCase() === 'all') {
-      return Array.from({ length: maxPages }, (_, i) => i);
-    }
-
-    const pages = new Set<number>();
-    const parts = rangeStr.split(',').map(p => p.trim());
-    
-    for (const part of parts) {
-      if (part.includes('-')) {
-        const [start, end] = part.split('-').map(n => parseInt(n.trim()));
-        if (!isNaN(start) && !isNaN(end) && start <= end && start >= 1 && end <= maxPages) {
-          for (let i = start; i <= end; i++) pages.add(i - 1);
-        }
-      } else {
-        const page = parseInt(part);
-        if (!isNaN(page) && page >= 1 && page <= maxPages) {
-          pages.add(page - 1);
-        }
-      }
-    }
-    
-    return Array.from(pages).sort((a, b) => a - b);
   };
 
   const rotatePDF = async () => {
-    if (!file) return;
+    if (!file || selectedPages.size === 0) {
+      alert('Please select at least one page to rotate.');
+      return;
+    }
     
     setIsProcessing(true);
     try {
-      const indicesToRotate = parsePageRange(pageRange, totalPages);
-      if (indicesToRotate.length === 0) {
-        alert('Invalid page range. Please check your input.');
-        setIsProcessing(false);
-        return;
-      }
+      const selectedPageNumbers = Array.from(selectedPages)
+        .map((id: string) => parseInt(id.replace('page-', '')))
+        .map(num => num - 1); // Convert to 0-indexed
 
       const arrayBuffer = await file.arrayBuffer();
       const pdf = await PDFDocument.load(arrayBuffer);
-      const pages = pdf.getPages();
+      const documentPages = pdf.getPages();
       
-      indicesToRotate.forEach(index => {
-        if (pages[index]) {
-          const currentRotation = pages[index].getRotation().angle;
-          pages[index].setRotation(degrees(currentRotation + rotation));
+      selectedPageNumbers.forEach(index => {
+        if (documentPages[index]) {
+          const currentRotation = documentPages[index].getRotation().angle;
+          documentPages[index].setRotation(degrees(currentRotation + rotation));
         }
       });
       
@@ -100,6 +89,12 @@ export default function RotatePdf() {
       a.click();
       URL.revokeObjectURL(url);
       a.remove();
+
+      // Reset
+      setFile(null);
+      setPages([]);
+      setSelectedPages(new Set());
+      clearPdfPreviewCache();
     } catch (error) {
       console.error('Error rotating PDF:', error);
       alert('An error occurred while rotating the PDF.');
@@ -109,11 +104,11 @@ export default function RotatePdf() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
+    <div className="max-w-5xl mx-auto space-y-8">
       <div className="text-center space-y-4">
         <h1 className="text-4xl font-bold text-slate-900 tracking-tight">Rotate PDF</h1>
         <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-          Rotate specific pages or all pages in your PDF document.
+          Click on page thumbnails to select which pages to rotate, then choose the rotation angle.
         </p>
         <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-700 rounded-full text-sm font-medium">
           <Shield className="w-4 h-4" />
@@ -144,64 +139,64 @@ export default function RotatePdf() {
           </div>
         ) : (
           <div className="space-y-8">
-            <div className="flex items-center justify-between p-6 bg-slate-50 border border-slate-200 rounded-xl">
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-white rounded-xl border border-slate-200 text-red-500 shadow-sm">
-                  <FileText className="w-8 h-8" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-slate-800 text-lg">{file.name}</h3>
-                  <p className="text-sm text-slate-500">{(file.size / 1024 / 1024).toFixed(2)} MB • {totalPages} Pages</p>
-                </div>
+            {/* File Info */}
+            <div className="flex items-center justify-between p-4 bg-slate-50 border border-slate-200 rounded-lg">
+              <div>
+                <p className="font-medium text-slate-900">{file.name}</p>
+                <p className="text-sm text-slate-500">
+                  {(file.size / 1024 / 1024).toFixed(2)} MB • {pages.length} Pages
+                </p>
               </div>
-              <button 
-                onClick={() => { setFile(null); setPageRange(''); setTotalPages(0); }}
-                className="text-sm text-indigo-600 hover:text-indigo-800 font-medium underline"
+              <button
+                onClick={() => {
+                  setFile(null);
+                  setPages([]);
+                  setSelectedPages(new Set());
+                  clearPdfPreviewCache();
+                }}
+                className="text-sm text-indigo-600 hover:text-indigo-800 font-medium"
               >
                 Change File
               </button>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <label className="block text-sm font-medium text-slate-700">
-                  Pages to Rotate
-                </label>
-                <input
-                  type="text"
-                  value={pageRange}
-                  onChange={(e) => setPageRange(e.target.value)}
-                  placeholder="e.g., all, 1-3, 5"
-                  className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all text-lg"
-                />
-                <p className="text-sm text-slate-500">
-                  Type "all" or enter page ranges (e.g., 1-3, 5).
-                </p>
-              </div>
-
-              <div className="space-y-4">
-                <label className="block text-sm font-medium text-slate-700">
-                  Rotation Angle
-                </label>
-                <div className="flex gap-3">
-                  {[90, 180, 270].map((angle) => (
-                    <button
-                      key={angle}
-                      onClick={() => setRotation(angle)}
-                      className={`flex-1 py-3 rounded-xl border font-medium transition-colors ${rotation === angle ? 'bg-indigo-50 border-indigo-500 text-indigo-700' : 'bg-white border-slate-300 text-slate-700 hover:bg-slate-50'}`}
-                    >
-                      {angle}°
-                    </button>
-                  ))}
-                </div>
+            {/* Rotation Angle */}
+            <div className="space-y-3">
+              <label className="block text-sm font-medium text-slate-700">
+                Rotation Angle
+              </label>
+              <div className="flex gap-3">
+                {[90, 180, 270].map((angle) => (
+                  <button
+                    key={angle}
+                    onClick={() => setRotation(angle)}
+                    className={`flex-1 py-3 rounded-xl border font-medium transition-colors ${rotation === angle ? 'bg-indigo-50 border-indigo-500 text-indigo-700' : 'bg-white border-slate-300 text-slate-700 hover:bg-slate-50'}`}
+                  >
+                    {angle}°
+                  </button>
+                ))}
               </div>
             </div>
 
-            <div className="pt-4 flex justify-end">
+            {/* Page Thumbnail Selection */}
+            {isLoading ? (
+              <PdfThumbnailSkeleton count={6} />
+            ) : (
+              <SelectablePdfGrid
+                pages={pages}
+                selectedIds={selectedPages}
+                onSelectionChange={setSelectedPages}
+                mode="multi"
+                isLoading={isProcessing}
+              />
+            )}
+
+            {/* Rotate Button */}
+            <div className="flex justify-end pt-4">
               <button 
                 onClick={rotatePDF}
-                disabled={isProcessing}
-                className={`flex items-center gap-2 px-8 py-4 rounded-xl font-medium transition-colors shadow-sm ${isProcessing ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'bg-indigo-600 text-white hover:bg-indigo-700'}`}
+                disabled={isProcessing || selectedPages.size === 0}
+                className={`flex items-center gap-2 px-8 py-4 rounded-xl font-medium transition-colors shadow-sm ${isProcessing || selectedPages.size === 0 ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'bg-indigo-600 text-white hover:bg-indigo-700'}`}
               >
                 {isProcessing ? (
                   <>Processing...</>
